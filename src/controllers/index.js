@@ -1,3 +1,3 @@
-import UserController from './UserController'
+import AccountController from './AccountController'
 
-export { UserController, }
+export { AccountController, }

@@ -1,12 +1,15 @@
 import { Schema, model } from 'mongoose'
 
-// TODO: Create an API for the models so devs don't need to know about the DB used (not the ORM)
 const userSchema = new Schema({
 	username: {
 		type: String,
 		unique: true,
 		required: true,
 	},
+	address: {
+		type: String,
+	},
+	balances: []
 })
 
 userSchema.statics.findByLogin = async function(login) {
@@ -21,9 +24,12 @@ userSchema.statics.findByLogin = async function(login) {
 	return user
 }
 
-userSchema.pre('remove', next =>
-	this.model('Message').deleteMany({ user: this._id }, next),
-)
+userSchema.pre('save', function(next) {
+	let user = this
+	// TODO: Generate blockchain account before save()
+	user.address = '0x0000000ETH'
+	next()
+})
 
 const User = model('User', userSchema)
 
