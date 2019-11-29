@@ -37,6 +37,7 @@
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
     "mongoose": "^5.7.7",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "web3": "^1.2.4"
   }
 }

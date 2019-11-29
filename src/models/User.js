@@ -24,13 +24,6 @@ userSchema.statics.findByLogin = async function(login) {
 	return user
 }
 
-userSchema.pre('save', function(next) {
-	let user = this
-	// TODO: Generate blockchain account before save()
-	user.address = '0x0000000ETH'
-	next()
-})
-
 const User = model('User', userSchema)
 
 export default User

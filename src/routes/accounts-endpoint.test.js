@@ -38,8 +38,8 @@ const initUserDatabase = async () => {
 
 describe('User endpoint', () => {
 	it('should create a new  user', async done => {
-		const response = await request.post('/users').send(USERS.DUMMY)
-		const { status, body  } = response
+		const response = await request.post('/accounts').send(USERS.DUMMY)
+		const { status, body } = response
 		expect(status).toEqual(CREATED)
 		expect(body).toHaveProperty('user')
 		expect(body.user.username).toBe(USERS.DUMMY.username)
@@ -47,7 +47,7 @@ describe('User endpoint', () => {
 	})
 
 	it('should fetch all users', async done => {
-		const response = await request.get('/users')
+		const response = await request.get('/accounts')
 		const { status, body } = response
 		expect(status).toEqual(OK)
 		expect(body).toHaveProperty('users')
@@ -55,38 +55,6 @@ describe('User endpoint', () => {
 		expect(users.length).toEqual(2)
 		expect(users[0].username).toBe(USERS.USER_1.username)
 		expect(users[1].username).toBe(USERS.USER_2.username)
-		done()
-	})
-
-	it('should fetch a single user', async done => {
-		const response = await request.get(`/users/${USERS.USER_1._id}`)
-		const fetchedUser = response.body.user
-		expect(response.status).toEqual(OK)
-		expect(fetchedUser.username).toBe(USERS.USER_1.username)
-		done()
-	})
-
-	it('should update a user', async done => {
-		const response = await request.put(`/users/${USERS.USER_1._id}`).send({
-			username: 'Thomas Shelby',
-		})
-		const { status, body } = response
-		expect(status).toEqual(OK)
-		expect(body.user.username).toEqual('Thomas Shelby')
-		done()
-	})
-
-	it('should delete a user', async done => {
-		const response = await request.delete(`/users/${USERS.USER_1._id}`)
-		expect(response.status).toEqual(NO_CONTENT)
-		const userFound = await User.findById(USERS.USER_1._id)
-		expect(userFound).toBe(null)
-		done()
-	})
-
-	it('should return status code 404 when user does NOT exist', async done => {
-		const response = await request.get('/users/100')
-		expect(response.status).toEqual(NOT_FOUND)
 		done()
 	})
 })

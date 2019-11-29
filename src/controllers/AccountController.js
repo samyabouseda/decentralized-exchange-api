@@ -5,13 +5,18 @@ import {
 } from 'http-status-codes'
 
 const create = async (req, res) => {
+	// const username = req.body.username
+	// const password = req.body.password
+	// TODO: Generate blockchain account with Web3.js
+	// const account = await BlockchainInterface.accounts.create(password)
+	// const { address, privateKey } = account
 	try {
 		const user = await req.context.models.User.create({
 			username: req.body.username,
 		})
-		return res.status(CREATED).json({
-			user,
-		})
+		// const { id, username, address } = newUser
+		// const user = { id, username, } // address, privateKey }
+		return res.status(CREATED).json(user)
 	} catch (error) {
 		return res
 			.status(INTERNAL_SERVER_ERROR)
