@@ -3,7 +3,7 @@
  */
 
 import BlockchainInterface from './index'
-const blockchain = BlockchainInterface
+const blockchain = new BlockchainInterface()
 
 describe('Blockchain', () => {
 	it('is connected', async () => {

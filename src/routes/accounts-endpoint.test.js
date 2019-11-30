@@ -3,7 +3,7 @@ import supertest from 'supertest'
 import mongoose from 'mongoose'
 import { setupDB } from '../test-setup'
 import User from '../models/User'
-import { CREATED, NO_CONTENT, NOT_FOUND, OK } from 'http-status-codes'
+import { CREATED, NO_CONTENT, NOT_FOUND, OK, CONFLICT } from 'http-status-codes'
 
 const request = supertest(app)
 
@@ -36,13 +36,27 @@ const initUserDatabase = async () => {
 	await User.create(USERS.USER_2)
 }
 
-describe('User endpoint', () => {
+describe('Accounts endpoint', () => {
 	it('should create a new  user', async done => {
 		const response = await request.post('/accounts').send(USERS.DUMMY)
 		const { status, body } = response
 		expect(status).toEqual(CREATED)
 		expect(body).toHaveProperty('user')
+		expect(body.user).toHaveProperty('id')
+		expect(body.user).toHaveProperty('username')
+		expect(body.user).toHaveProperty('address')
+		expect(body.user).toHaveProperty('privateKey')
 		expect(body.user.username).toBe(USERS.DUMMY.username)
+		expect(body.user.privateKey.length).toBe(66)
+		expect(body.user.address.length).toBe(42)
+		done()
+	})
+
+	it('should throw 409 if username already exists', async done => {
+		await request.post('/accounts').send(USERS.DUMMY)
+		const response = await request.post('/accounts').send(USERS.DUMMY)
+		const { status } = response
+		expect(status).toEqual(CONFLICT)
 		done()
 	})
 

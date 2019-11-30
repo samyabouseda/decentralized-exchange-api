@@ -1,23 +1,30 @@
 import {
+	CONFLICT,
 	CREATED,
 	INTERNAL_SERVER_ERROR,
 	OK,
 } from 'http-status-codes'
+import BlockchainInterface from '../blockchain'
 
 const create = async (req, res) => {
-	// const username = req.body.username
-	// const password = req.body.password
-	// TODO: Generate blockchain account with Web3.js
-	// const account = await BlockchainInterface.accounts.create(password)
-	// const { address, privateKey } = account
 	try {
 		const user = await req.context.models.User.create({
 			username: req.body.username,
 		})
-		// const { id, username, address } = newUser
-		// const user = { id, username, } // address, privateKey }
-		return res.status(CREATED).json(user)
+		const account = await new BlockchainInterface().createAccount()
+		const userResponse = {
+			id: user.id,
+			username: user.username,
+			address: account.address,
+			privateKey: account.privateKey,
+		}
+		return res.status(CREATED).json({ user: userResponse })
 	} catch (error) {
+		if (error.name === 'MongoError' && error.code === 11000) {
+			return res
+				.status(CONFLICT)
+				.json({ error: 'User already exists!' })
+		}
 		return res
 			.status(INTERNAL_SERVER_ERROR)
 			.json({ error: error.message })

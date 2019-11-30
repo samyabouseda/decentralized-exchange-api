@@ -13,7 +13,11 @@ const base = {
 		PORT: parseInt(process.env.DB_PORT) || DEFAULT_DB_PORT,
 		DATABASE_URL: process.env.DATABASE_URL,
 		ERASE_DB_ON_SYNC: false
+	},
+	blockchain: {
+		BLOCKCHAIN_URL: process.env.BLOCKCHAIN_URL || 'ws://127.0.0.1:7545',
 	}
+
 }
 
 const development = {
