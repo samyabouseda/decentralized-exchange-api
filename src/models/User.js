@@ -1,4 +1,7 @@
 import { Schema, model } from 'mongoose'
+import BlockchainInterface from '../blockchain'
+
+const blockchain = new BlockchainInterface()
 
 const userSchema = new Schema({
 	username: {
@@ -13,15 +16,24 @@ const userSchema = new Schema({
 })
 
 userSchema.statics.findByLogin = async function(login) {
-	let user = await this.findOne({
+	return this.findOne({
 		username: login,
 	})
+}
 
-	if (!user) {
-		user = await this.findOne({ email: login })
-	}
-
+userSchema.statics.findByPrivateKey = async function(privateKey) {
+	const address = await blockchain.getAddressFrom(privateKey)
+	const user = await this.findOne({
+		address: address
+	})
+	if (user === null) throw new Error('This private key does not match any existing user.')
 	return user
+	// {
+	// 	id: user._id,
+	// 	username: user.username,
+	// 	address: user.address,
+	// 	balances: user.balances,
+	// }
 }
 
 const User = model('User', userSchema)

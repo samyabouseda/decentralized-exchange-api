@@ -24,6 +24,10 @@ class BlockchainInterface {
 	async createAccount() {
 		return this._web3.eth.accounts.create()
 	}
+
+	async getAddressFrom(privateKey) {
+		return this._web3.eth.accounts.privateKeyToAccount(privateKey).address
+	}
 }
 
 export default BlockchainInterface

@@ -53,8 +53,7 @@ describe('Accounts endpoint', () => {
 	})
 
 	it('should throw 409 if username already exists', async done => {
-		await request.post('/accounts').send(USERS.DUMMY)
-		const response = await request.post('/accounts').send(USERS.DUMMY)
+		const response = await request.post('/accounts').send(USERS.USER_1)
 		const { status } = response
 		expect(status).toEqual(CONFLICT)
 		done()
@@ -69,6 +68,23 @@ describe('Accounts endpoint', () => {
 		expect(users.length).toEqual(2)
 		expect(users[0].username).toBe(USERS.USER_1.username)
 		expect(users[1].username).toBe(USERS.USER_2.username)
+		done()
+	})
+
+	it('should fetch the user account corresponding to the privateKey', async done => {
+		const newAccount = await request.post('/accounts').send(USERS.DUMMY)
+		const account = {
+			address: newAccount.body.user.address,
+			privateKey: newAccount.body.user.privateKey,
+		}
+		const response = await request.get(`/accounts/${account.privateKey}`)
+		const { status, body } = response
+		expect(status).toEqual(OK)
+		expect(body).toHaveProperty('user')
+		expect(body.user).toHaveProperty('id')
+		expect(body.user).toHaveProperty('username')
+		expect(body.user).toHaveProperty('address')
+		expect(body.user.address).toEqual(account.address)
 		done()
 	})
 })
