@@ -5,6 +5,6 @@ const routes = Router()
 
 routes.post('/', AccountController.create)
 routes.get('/', AccountController.getAll)
-routes.get('/:privateKey', AccountController.getByPrivateKey)
+routes.get('/:privateKey', AccountController.login)
 
 export default routes

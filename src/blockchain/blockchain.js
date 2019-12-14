@@ -10,6 +10,11 @@ class BlockchainInterface {
 		this._web3 = new Web3(this._provider)
 	}
 
+	/**
+	 * Tests the blockchain connection.
+	 *
+	 * return {boolean} true if the blockchain is connected.
+	 */
 	async isConnected() {
 		const account = await this._web3.eth.accounts.create()
 		const address = account.address
@@ -18,8 +23,10 @@ class BlockchainInterface {
 	}
 
 	/**
-	 * @returns {Promise<Account>}
-	 * @see https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#create
+	 * Creates a new account on the blockchain.
+	 *
+	 * @see {https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#create} for further information.
+	 * @return {Promise<Account>}
 	 */
 	async createAccount() {
 		return this._web3.eth.accounts.create()

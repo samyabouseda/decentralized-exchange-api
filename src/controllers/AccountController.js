@@ -46,7 +46,7 @@ const getAll = async (req, res) => {
 	}
 }
 
-const getByPrivateKey = async (req, res) => {
+const login = async (req, res) => {
 	try {
 		let user = await req.context.models.User.findByPrivateKey(
 			req.params.privateKey
@@ -76,5 +76,5 @@ const getByPrivateKey = async (req, res) => {
 export default {
 	create,
 	getAll,
-	getByPrivateKey,
+	login,
 }
