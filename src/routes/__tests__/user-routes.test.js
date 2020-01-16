@@ -1,8 +1,8 @@
-import app from '../app'
+import app from '../../app'
 import supertest from 'supertest'
 import mongoose from 'mongoose'
-import { setupDB } from '../test-setup'
-import User from '../models/User'
+import { setupDB } from '../../test-setup'
+import User from '../../models/User'
 import { CREATED, NO_CONTENT, NOT_FOUND, OK, CONFLICT } from 'http-status-codes'
 
 const request = supertest(app)

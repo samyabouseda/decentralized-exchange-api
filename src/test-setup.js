@@ -3,8 +3,6 @@
  * @link https://zellwk.com/blog/jest-and-mongoose/
  */
 
-// TODO: https://stackoverflow.com/questions/47997652/jest-beforeall-share-between-multiple-test-files?rq=1
-
 import mongoose from 'mongoose'
 import config from '../config'
 

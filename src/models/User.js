@@ -28,12 +28,6 @@ userSchema.statics.findByPrivateKey = async function(privateKey) {
 	})
 	if (user === null) throw new Error('This private key does not match any existing user.')
 	return user
-	// {
-	// 	id: user._id,
-	// 	username: user.username,
-	// 	address: user.address,
-	// 	balances: user.balances,
-	// }
 }
 
 const User = model('User', userSchema)

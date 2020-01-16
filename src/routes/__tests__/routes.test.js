@@ -1,7 +1,7 @@
 import HttpStatus from 'http-status-codes'
-import app from '../app'
+import app from '../../app'
 import supertest from 'supertest'
-import { setupDB } from '../test-setup'
+import { setupDB } from '../../test-setup'
 
 const request = supertest(app)
 
