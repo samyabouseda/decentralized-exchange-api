@@ -9,7 +9,7 @@ const INSTRUMENTS = {
 	INSTRUMENT_1: {
 		address: '0x776a9b10c5fe1805317B4B0da110672C53608aDd',
 		name: 'DummyInstrument',
-		symbol: 'DUMMY',
+		symbol: 'DMY',
 		abi: [
 			{
 			"type":"event",
