@@ -1,7 +1,8 @@
 import app from '../../app'
 import supertest from 'supertest'
 import { setupDB } from '../../test-setup'
-import { CREATED } from 'http-status-codes'
+import { CREATED, OK } from 'http-status-codes'
+import Instrument from '../../models/Instrument'
 
 const request = supertest(app)
 
@@ -33,6 +34,15 @@ const INSTRUMENTS = {
 
 setupDB()
 
+beforeEach(() => {
+	// we have to return the promise that resolves when the database is initialized
+	return initInstrumentDatabase()
+})
+
+const initInstrumentDatabase = async () => {
+	await Instrument.create(INSTRUMENTS.INSTRUMENT_1)
+}
+
 describe('Instruments endpoint', () => {
 	it('should register a new instrument', async done => {
 		const response = await request.post('/instruments').send(INSTRUMENTS.INSTRUMENT_1)
@@ -48,6 +58,24 @@ describe('Instruments endpoint', () => {
 		expect(body.instrument.name).toBe(INSTRUMENTS.INSTRUMENT_1.name)
 		expect(body.instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_1.symbol)
 		expect(body.instrument.abi).toStrictEqual(INSTRUMENTS.INSTRUMENT_1.abi)
+		done()
+	})
+
+	it('should fetch all the registered instruments', async done => {
+		const response = await request.get('/instruments')
+		const { status, body } = response
+		expect(status).toEqual(OK)
+		expect(body).toHaveProperty('instruments')
+		const { instruments } = body
+		expect(instruments.length).toEqual(1)
+		const instrument = instruments[0]
+		expect(instrument).toHaveProperty('_id')
+		expect(instrument).toHaveProperty('address')
+		expect(instrument).toHaveProperty('name')
+		expect(instrument).toHaveProperty('symbol')
+		expect(instrument.name).toBe(INSTRUMENTS.INSTRUMENT_1.name)
+		expect(instrument.address).toBe(INSTRUMENTS.INSTRUMENT_1.address)
+		expect(instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_1.symbol)
 		done()
 	})
 })

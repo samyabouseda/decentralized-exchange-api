@@ -26,6 +26,20 @@ const create = async (req, res) => {
 	}
 }
 
+const getAll = async (req, res) => {
+	try {
+		const instruments = await req.context.models.Instrument.find()
+		return res.status(OK).json({
+			instruments,
+		})
+	} catch (error) {
+		return res
+			.status(INTERNAL_SERVER_ERROR)
+			.json({ error: error.message })
+	}
+}
+
 export default {
 	create,
+	getAll
 }
