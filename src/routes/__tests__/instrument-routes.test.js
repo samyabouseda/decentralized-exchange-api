@@ -107,4 +107,19 @@ describe('Instruments endpoint', () => {
 		done()
 	})
 
+	// it('should fetch an instrument by its id', async done => {
+	// 	const { body: { instruments} } = await request.get('/instruments')
+	// 	const _instrument = instruments[0]
+	// 	const response = await request.get(`/instruments/${_instrument._id}`)
+	// 	const { status, body } = response
+	// 	expect(status).toEqual(OK)
+	// 	expect(body).toHaveProperty('instrument')
+	// 	let { instrument } = body.instrument
+	// 	expect(instrument).toHaveProperty('address')
+	// 	expect(instrument).toHaveProperty('bids')
+	// 	expect(instrument).toHaveProperty('asks')
+	// 	expect(instrument).toHaveProperty('lowestBid')
+	// 	expect(instrument).toHaveProperty('highestAsk')
+	// 	done()
+	// })
 })

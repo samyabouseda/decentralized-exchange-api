@@ -30,9 +30,11 @@ class MatchingEngineInterface {
 	}
 
 	async getBidsAndAsksFor(instrument) {
+		console.log(instrument.address)
 		const url = `${this.URI}/instruments/${instrument.address}`
 		try {
-			return await axios.get(url)
+			const response = await axios.get(url)
+			return response
 		} catch (error) {
 			if (error.message.includes(CONFLICT)) {
 				throw Error('Instrument does not exist on Matching Engine service')
