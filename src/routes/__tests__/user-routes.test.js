@@ -1,25 +1,19 @@
 import app from '../../app'
 import supertest from 'supertest'
-import mongoose from 'mongoose'
 import { setupDB } from '../../test-setup'
 import User from '../../models/User'
 import { CREATED, NO_CONTENT, NOT_FOUND, OK, CONFLICT } from 'http-status-codes'
 
 const request = supertest(app)
 
-const generateObjectId = () => mongoose.Types.ObjectId()
-
 const USERS = {
 	USER_1: {
-		_id: generateObjectId(),
 		username: 'John'
 	},
 	USER_2: {
-		_id: generateObjectId(),
 		username: 'Alice'
 	},
 	DUMMY: {
-		_id: generateObjectId(),
 		username: 'dummyuser'
 	},
 }

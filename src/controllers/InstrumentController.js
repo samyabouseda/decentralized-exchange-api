@@ -4,17 +4,21 @@ import {
 	INTERNAL_SERVER_ERROR, NOT_FOUND,
 	OK,
 } from 'http-status-codes'
+import MatchingEngineInterface from '../services/matching-engine-interface'
 
 const create = async (req, res) => {
 	try {
 		const { _id: id, address, name, symbol, abi } = await req.context.models.Instrument.create( req.body )
 		const instrument = { id, address, name, symbol, abi }
-		// TODO: new MatchingEngineInterface().registerNewInstrument(instrument)
-		// to register a new instrument the matching engine simply instantiate
-		// a new OrderBook and stores it in the orderBooks dictionary.
-		// The key is the instrument's ID (or could be address).
+		try {
+			const response = await new MatchingEngineInterface().registerNewInstrument(instrument)
+		} catch (error) {
+			console.log('Could not register the instrument on the matching engine service.')
+			console.log(error)
+		}
 		return res.status(CREATED).json({ instrument })
 	} catch (error) {
+		console.log(error)
 		if (error.name === 'MongoError' && error.code === 11000) {
 			return res
 				.status(CONFLICT)
@@ -23,6 +27,7 @@ const create = async (req, res) => {
 		return res
 			.status(INTERNAL_SERVER_ERROR)
 			.json({ error: error.message })
+
 	}
 }
 

@@ -26,6 +26,9 @@ const development = {
 		ERASE_DB_ON_SYNC: true,
 		PORT: base.db.PORT,
 		DATABASE_URL: base.db.DATABASE_URL,
+	},
+	services: {
+		MATCHING_ENGINE_URL: 'http://127.0.0.1:8082'
 	}
 }
 
