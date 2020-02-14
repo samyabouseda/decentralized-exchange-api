@@ -11,16 +11,22 @@ const create = async (req, res) => {
 		const user = await req.context.models.User.create({
 			username: req.body.username,
 		})
-		const account = await new BlockchainInterface().createAccount()
-		const userResponse = {
-			id: user.id,
-			username: user.username,
-			address: account.address,
-			privateKey: account.privateKey,
+		try {
+			const account = await new BlockchainInterface().createAccount()
+			const userResponse = {
+				id: user.id,
+				username: user.username,
+				address: account.address,
+				privateKey: account.privateKey,
+			}
+			user.address = account.address
+			user.save()
+			return res.status(CREATED).json({ user: userResponse })
+		} catch (error) {
+			return res
+				.status(INTERNAL_SERVER_ERROR)
+				.json({ error: error.message })
 		}
-		user.address = account.address
-		user.save()
-		return res.status(CREATED).json({ user: userResponse })
 	} catch (error) {
 		if (error.name === 'MongoError' && error.code === 11000) {
 			return res

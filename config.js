@@ -16,6 +16,9 @@ const base = {
 	},
 	blockchain: {
 		BLOCKCHAIN_URL: process.env.BLOCKCHAIN_URL || 'ws://127.0.0.1:7545',
+	},
+	services: {
+		MATCHING_ENGINE_URL: 'http://127.0.0.1:8082'
 	}
 
 }
@@ -27,9 +30,6 @@ const development = {
 		PORT: base.db.PORT,
 		DATABASE_URL: base.db.DATABASE_URL,
 	},
-	services: {
-		MATCHING_ENGINE_URL: 'http://127.0.0.1:8082'
-	}
 }
 
 const test = {

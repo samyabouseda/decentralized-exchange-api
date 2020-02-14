@@ -18,7 +18,6 @@ const instrumentSchema = new Schema({
 	},
 	abi: {
 		type: Object,
-		unique: true,
 		required: true,
 	},
 })

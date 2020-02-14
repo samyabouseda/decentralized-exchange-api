@@ -3,14 +3,17 @@ import supertest from 'supertest'
 import { setupDB } from '../../test-setup'
 import { CREATED, OK } from 'http-status-codes'
 import Instrument from '../../models/Instrument'
+import faker from 'faker'
 
 const request = supertest(app)
 
 const INSTRUMENTS = {
 	INSTRUMENT_1: {
-		address: '0x776a9b10c5fe1805317B4B0da110672C53608aDd',
-		name: 'DummyInstrument',
-		symbol: 'DMY',
+		address: `0x776a9b10c5fe6045F17B4B0da110672C${Math.round(
+			Math.random() * 100000000,
+		)}`,
+		name: faker.company.companyName(),
+		symbol: faker.company.companyName().substr(0, 3),
 		abi: [
 			{
 			"type":"event",
@@ -30,6 +33,31 @@ const INSTRUMENTS = {
 			}
 		]
 	},
+	INSTRUMENT_DUMMY: {
+		address: `0x776a9b10c5fe6045F17B4B0da110672C${Math.round(
+			Math.random() * 100000000,
+		)}`,
+		name: faker.company.companyName(),
+		symbol: faker.company.companyName().substr(0, 3),
+		abi: [
+			{
+				"type":"event",
+				"inputs": [{"name":"a","type":"uint256","indexed":true},{"name":"b","type":"bytes32","indexed":false}],
+				"name":"Event"
+			},
+			{
+				"type":"event",
+				"inputs": [{"name":"a","type":"uint256","indexed":true},{"name":"b","type":"bytes32","indexed":false}],
+				"name":"Event2"
+			},
+			{
+				"type":"function",
+				"inputs": [{"name":"a","type":"uint256"}],
+				"name":"foo",
+				"outputs": []
+			}
+		]
+	},
 }
 
 setupDB()
@@ -45,7 +73,7 @@ const initInstrumentDatabase = async () => {
 
 describe('Instruments endpoint', () => {
 	it('should register a new instrument', async done => {
-		const response = await request.post('/instruments').send(INSTRUMENTS.INSTRUMENT_1)
+		const response = await request.post('/instruments').send(INSTRUMENTS.INSTRUMENT_DUMMY)
 		const { status, body } = response
 		expect(status).toEqual(CREATED)
 		expect(body).toHaveProperty('instrument')
@@ -54,10 +82,10 @@ describe('Instruments endpoint', () => {
 		expect(body.instrument).toHaveProperty('name')
 		expect(body.instrument).toHaveProperty('symbol')
 		expect(body.instrument).toHaveProperty('abi')
-		expect(body.instrument.address).toBe(INSTRUMENTS.INSTRUMENT_1.address)
-		expect(body.instrument.name).toBe(INSTRUMENTS.INSTRUMENT_1.name)
-		expect(body.instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_1.symbol)
-		expect(body.instrument.abi).toStrictEqual(INSTRUMENTS.INSTRUMENT_1.abi)
+		expect(body.instrument.address).toBe(INSTRUMENTS.INSTRUMENT_DUMMY.address)
+		expect(body.instrument.name).toBe(INSTRUMENTS.INSTRUMENT_DUMMY.name)
+		expect(body.instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_DUMMY.symbol)
+		expect(body.instrument.abi).toStrictEqual(INSTRUMENTS.INSTRUMENT_DUMMY.abi)
 		done()
 	})
 
@@ -78,4 +106,5 @@ describe('Instruments endpoint', () => {
 		expect(instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_1.symbol)
 		done()
 	})
+
 })

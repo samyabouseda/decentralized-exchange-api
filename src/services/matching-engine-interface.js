@@ -29,6 +29,18 @@ class MatchingEngineInterface {
 		}
 	}
 
+	async getBidsAndAsksFor(instrument) {
+		const url = `${this.URI}/instruments/${instrument.address}`
+		try {
+			return await axios.get(url)
+		} catch (error) {
+			if (error.message.includes(CONFLICT)) {
+				throw Error('Instrument does not exist on Matching Engine service')
+			}
+			throw Error(error.message)
+		}
+	}
+
 }
 
 export default MatchingEngineInterface
