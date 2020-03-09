@@ -47,12 +47,11 @@ class BlockchainInterface {
 		const { address, abi, symbol, name } = fiat
 		const buyerAddress = await this.getAddressFrom(privateKey)
 		const crowdsaleAddress = address
-
 		const from = {
 			address: buyerAddress,
 			privateKey: privateKey.substr(2),
 		}
-		const to = crowdsaleAddress //'0x7d0c42B08088B9c451dd68b3a6e3Ed770c6E08D6' //fiatAddress
+		const to = crowdsaleAddress
 		// amount is received in usdx
 		const value = this._web3.utils.toHex(
 			this._web3.utils.toWei(
@@ -60,12 +59,11 @@ class BlockchainInterface {
 				'ether',
 			),
 		)
-
 		const contract = await new this._web3.eth.Contract(
 			abi,
 			address,
 		)
-		console.log(await contract.methods.token().call())
+		const token = await contract.methods.token().call()
 
 		const res = await this.sendTransaction(
 			from,
@@ -80,12 +78,14 @@ class BlockchainInterface {
 				fiat: {
 					symbol: symbol,
 					name: name,
-					address: address,
+					address: token,
 				},
 				amount: amount,
 			}
 		} else {
-			throw Error('Could not send transaction')
+			throw Error(
+				'Could not purchase fiat. Please try again...',
+			)
 		}
 	}
 
@@ -99,16 +99,11 @@ class BlockchainInterface {
 			data,
 			web3,
 		)
-		console.log('TxObject:')
-		console.log(txObject)
 		// Sign transaction object.
 		const tx = await this.signTransaction(
 			txObject,
 			from.privateKey,
 		)
-
-		console.log('Tx:')
-		console.log(tx)
 		// Broadcast the transaction.
 		return await this.sendSignedTransaction(tx)
 	}
@@ -117,13 +112,9 @@ class BlockchainInterface {
 		return new Promise(async function(resolve, reject) {
 			let txObject
 			try {
-				console.log('get TX Count...')
-				console.log(from.address)
 				const txCount = await web3.eth.getTransactionCount(
 					from.address,
 				)
-				console.log('txCount')
-				console.log(txCount)
 				txObject = {
 					nonce: web3.utils.toHex(txCount),
 					to: to,
@@ -143,13 +134,10 @@ class BlockchainInterface {
 	}
 
 	async signTransaction(txData, privateKey) {
-		console.log(privateKey)
 		const bufferedPk = Buffer.from(privateKey, 'hex')
 		let tx
 		try {
 			tx = new Transaction(txData)
-			console.log('signTx/tx')
-			console.log(tx)
 			tx.sign(bufferedPk)
 		} catch (error) {
 			console.log(error)
@@ -164,7 +152,6 @@ class BlockchainInterface {
 				tx,
 				(err, txHash) => {
 					if (err) console.log(err)
-					else console.log('txHash: ', txHash)
 				},
 			)
 			console.log(res)
