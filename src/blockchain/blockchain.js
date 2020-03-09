@@ -41,34 +41,31 @@ class BlockchainInterface {
 	}
 
 	async buyFiat(amount, privateKey, fiat) {
+		/*
+		 * Note: The fiat token can be retrieved from the crowdsale.
+		 */
 		const { address, abi, symbol, name } = fiat
 		const buyerAddress = await this.getAddressFrom(privateKey)
-		const fiatAddress = address
-
-		// Contract
-		const contract = await new this._web3.eth.Contract(
-			abi,
-			address,
-		)
-		const token = await contract.methods.name().call()
-		console.log('token')
-		console.log(name)
-		// end
-
-		// amount is received in usdx
-		// const value = (amount / 231) * 100 // 100 because of 2 decimals.
-		const value = this._web3.utils.toHex(
-			this._web3.utils.toWei(
-				(amount / 231).toString(),
-				'ether',
-			),
-		)
+		const crowdsaleAddress = address
 
 		const from = {
 			address: buyerAddress,
 			privateKey: privateKey.substr(2),
 		}
-		const to = '0x7d0c42B08088B9c451dd68b3a6e3Ed770c6E08D6' //fiatAddress
+		const to = crowdsaleAddress //'0x7d0c42B08088B9c451dd68b3a6e3Ed770c6E08D6' //fiatAddress
+		// amount is received in usdx
+		const value = this._web3.utils.toHex(
+			this._web3.utils.toWei(
+				(amount / 231).toString(), // 231 is the fixed rate
+				'ether',
+			),
+		)
+
+		const contract = await new this._web3.eth.Contract(
+			abi,
+			address,
+		)
+		console.log(await contract.methods.token().call())
 
 		const res = await this.sendTransaction(
 			from,

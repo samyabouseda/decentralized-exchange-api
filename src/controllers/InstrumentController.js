@@ -8,6 +8,13 @@ import {
 import MatchingEngineInterface from '../services/matching-engine-interface'
 import BlockchainInterface from '../blockchain'
 
+/*
+ * To register an instrument representing a fiat
+ * currency, the crowdsale must be registered instead
+ * of the token itself.
+ *
+ * Note: The fiat token can be retrieved from the crowdsale.
+ */
 const create = async (req, res) => {
 	try {
 		const {
