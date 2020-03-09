@@ -1,13 +1,16 @@
 import Web3 from 'web3'
 import config from '../../config'
+import { Transaction } from 'ethereumjs-tx'
 
 class BlockchainInterface {
-
 	constructor() {
 		this._provider = new Web3.providers.WebsocketProvider(
-			config.blockchain.BLOCKCHAIN_URL
+			config.blockchain.BLOCKCHAIN_URL,
 		)
 		this._web3 = new Web3(this._provider)
+		this.buildTransactionObject = this.buildTransactionObject.bind(
+			this,
+		)
 	}
 
 	/**
@@ -33,7 +36,146 @@ class BlockchainInterface {
 	}
 
 	async getAddressFrom(privateKey) {
-		return this._web3.eth.accounts.privateKeyToAccount(privateKey).address
+		return this._web3.eth.accounts.privateKeyToAccount(privateKey)
+			.address
+	}
+
+	async buyFiat(amount, privateKey, fiat) {
+		const { address, abi, symbol, name } = fiat
+		const buyerAddress = await this.getAddressFrom(privateKey)
+		const fiatAddress = address
+
+		// Contract
+		const contract = await new this._web3.eth.Contract(
+			abi,
+			address,
+		)
+		const token = await contract.methods.name().call()
+		console.log('token')
+		console.log(name)
+		// end
+
+		// amount is received in usdx
+		// const value = (amount / 231) * 100 // 100 because of 2 decimals.
+		const value = this._web3.utils.toHex(
+			this._web3.utils.toWei(
+				(amount / 231).toString(),
+				'ether',
+			),
+		)
+
+		const from = {
+			address: buyerAddress,
+			privateKey: privateKey.substr(2),
+		}
+		const to = '0x7d0c42B08088B9c451dd68b3a6e3Ed770c6E08D6' //fiatAddress
+
+		const res = await this.sendTransaction(
+			from,
+			to,
+			value,
+			'',
+			this._web3,
+		)
+		if (res) {
+			return {
+				buyer: buyerAddress,
+				fiat: {
+					symbol: symbol,
+					name: name,
+					address: address,
+				},
+				amount: amount,
+			}
+		} else {
+			throw Error('Could not send transaction')
+		}
+	}
+
+	async sendTransaction(from, to, value, data, web3) {
+		// Build transaction object.
+
+		const txObject = await this.buildTransactionObject(
+			from,
+			to,
+			value,
+			data,
+			web3,
+		)
+		console.log('TxObject:')
+		console.log(txObject)
+		// Sign transaction object.
+		const tx = await this.signTransaction(
+			txObject,
+			from.privateKey,
+		)
+
+		console.log('Tx:')
+		console.log(tx)
+		// Broadcast the transaction.
+		return await this.sendSignedTransaction(tx)
+	}
+
+	async buildTransactionObject(from, to, value, data, web3) {
+		return new Promise(async function(resolve, reject) {
+			let txObject
+			try {
+				console.log('get TX Count...')
+				console.log(from.address)
+				const txCount = await web3.eth.getTransactionCount(
+					from.address,
+				)
+				console.log('txCount')
+				console.log(txCount)
+				txObject = {
+					nonce: web3.utils.toHex(txCount),
+					to: to,
+					data: web3.utils.toHex(data),
+					value: web3.utils.toHex(value),
+					gasLimit: web3.utils.toHex(210000),
+					gasPrice: web3.utils.toHex(
+						web3.utils.toWei('10', 'gwei'),
+					),
+				}
+				resolve(txObject)
+			} catch (error) {
+				console.log(error)
+				reject(error)
+			}
+		})
+	}
+
+	async signTransaction(txData, privateKey) {
+		console.log(privateKey)
+		const bufferedPk = Buffer.from(privateKey, 'hex')
+		let tx
+		try {
+			tx = new Transaction(txData)
+			console.log('signTx/tx')
+			console.log(tx)
+			tx.sign(bufferedPk)
+		} catch (error) {
+			console.log(error)
+		}
+		const serializedTx = tx.serialize()
+		return '0x' + serializedTx.toString('hex')
+	}
+
+	async sendSignedTransaction(tx) {
+		try {
+			let res = await this._web3.eth.sendSignedTransaction(
+				tx,
+				(err, txHash) => {
+					if (err) console.log(err)
+					else console.log('txHash: ', txHash)
+				},
+			)
+			console.log(res)
+			return true
+		} catch (error) {
+			console.log(error)
+			return false
+		}
 	}
 }
 

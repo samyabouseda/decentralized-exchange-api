@@ -1,7 +1,7 @@
 import app from '../../app'
 import supertest from 'supertest'
 import { setupDB } from '../../test-setup'
-import { CREATED, OK } from 'http-status-codes'
+import { ACCEPTED, CREATED, OK } from 'http-status-codes'
 import Instrument from '../../models/Instrument'
 import faker from 'faker'
 
@@ -122,4 +122,29 @@ describe('Instruments endpoint', () => {
 	// 	expect(instrument).toHaveProperty('highestAsk')
 	// 	done()
 	// })
+
+	it('should purchase fiat token', async done => {
+	// 	purchase: {
+	// 		buyer: "0x3d088960898540017ABeCEcAf6017246899495e4",
+	// 			fiat: {
+	// 			symbol: "USDX",
+	// 				name: "Dextr. USD",
+	// 				address: "0x3d088960898540017ABeCEcAf60172468994FAAA",
+	// 		},
+	// 		amount: 231,
+	// 			status: "pending" // complete,
+	// 	}
+	// }
+	// 	const { status, body } = response
+	// 	expect(status).toEqual(ACCEPTED)
+	// 	expect(body).toHaveProperty('purchase')
+	// 	let { purchase } = body
+	// 	expect(purchase).toHaveProperty('buyer')
+	// 	expect(purchase).toHaveProperty('fiat')
+	// 	expect(purchase.fiat).toHaveProperty('symbol')
+	// 	expect(purchase.fiat).toHaveProperty('name')
+	// 	expect(purchase.fiat).toHaveProperty('address')
+	// 	expect(purchase).toHaveProperty('amount')
+	// 	expect(purchase).toHaveProperty('status')
+	})
 })
