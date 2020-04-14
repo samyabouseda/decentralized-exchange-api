@@ -89,7 +89,50 @@ class BlockchainInterface {
 		}
 	}
 
-	async depositFiat() {}
+	async deposit(amount, privateKey, token) {
+		const { address, abi, symbol, name } = fiat
+		const depositor = await this.getAddressFrom(privateKey)
+		const dexAddress = undefined
+		const from = {
+			address: depositor,
+			privateKey: privateKey.substr(2),
+		}
+		const to = dexAddress
+
+		// Build deposit object.
+		const jsonInterface = {
+			name: 'deposit',
+			type: 'function',
+			inputs: [
+				{
+					type: 'address',
+					name: 'token',
+				},
+				{
+					type: 'uint',
+					name: 'amount',
+				},
+				{
+					type: 'uint',
+					name: 'rate',
+				},
+			],
+		}
+
+		const value = ''
+
+		// TODO: Finish implementing deposit.
+		// const deposit = amount * 1000000000000000000
+		// const params = [
+		// 	contracts.fiat.options.address,
+		// 	deposit.toString(),
+		// ]
+		// const data = this._web3.eth.abi.encodeFunctionCall(
+		// 	jsonInterface,
+		// 	params,
+		// )
+		// this.sendTransaction(from, to, value, data, this._web3)
+	}
 
 	async sendTransaction(from, to, value, data, web3) {
 		// Build transaction object.

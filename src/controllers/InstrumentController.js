@@ -110,9 +110,28 @@ const purchaseFiat = async (req, res) => {
 	}
 }
 
+const depositFiat = async (req, res) => {
+	try {
+		let deposit = await new BlockchainInterface().deposit(
+			amount,
+			privateKey,
+			fiat,
+		)
+		// TODO: Record totalDeposited when deposit successful.
+		return res.status(OK).json({
+			deposit,
+		})
+	} catch (error) {
+		return res
+			.status(INTERNAL_SERVER_ERROR)
+			.json({ error: error.message })
+	}
+}
+
 export default {
 	create,
 	getAll,
 	getById,
 	purchaseFiat,
+	depositFiat,
 }
