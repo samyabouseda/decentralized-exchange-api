@@ -85,16 +85,23 @@ const purchaseFiat = async (req, res) => {
 		const fiat = await req.context.models.Instrument.findOne({
 			symbol: req.params.instrumentSymbol,
 		})
-		const purchase = await new BlockchainInterface().buyFiat(
-			amount,
-			privateKey,
-			fiat,
-		)
-
-		// TODO: On successful purchase update balances
+		let purchase
+		let user
+		try {
+			purchase = await new BlockchainInterface().buyFiat(
+				amount,
+				privateKey,
+				fiat,
+			)
+			user = await req.context.models.User.updateBalances(
+				privateKey,
+				purchase,
+			)
+		} catch (error) {}
 
 		return res.status(OK).json({
 			purchase,
+			user,
 		})
 	} catch (error) {
 		return res

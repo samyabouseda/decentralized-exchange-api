@@ -89,9 +89,10 @@ class BlockchainInterface {
 		}
 	}
 
+	async depositFiat() {}
+
 	async sendTransaction(from, to, value, data, web3) {
 		// Build transaction object.
-
 		const txObject = await this.buildTransactionObject(
 			from,
 			to,

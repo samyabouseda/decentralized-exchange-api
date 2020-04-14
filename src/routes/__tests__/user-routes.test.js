@@ -2,19 +2,25 @@ import app from '../../app'
 import supertest from 'supertest'
 import { setupDB } from '../../test-setup'
 import User from '../../models/User'
-import { CREATED, NO_CONTENT, NOT_FOUND, OK, CONFLICT } from 'http-status-codes'
+import {
+	CREATED,
+	NO_CONTENT,
+	NOT_FOUND,
+	OK,
+	CONFLICT,
+} from 'http-status-codes'
 
 const request = supertest(app)
 
 const USERS = {
 	USER_1: {
-		username: 'John'
+		username: 'John',
 	},
 	USER_2: {
-		username: 'Alice'
+		username: 'Alice',
 	},
 	DUMMY: {
-		username: 'dummyuser'
+		username: 'dummyuser',
 	},
 }
 
@@ -32,7 +38,9 @@ const initUserDatabase = async () => {
 
 describe('Accounts endpoint', () => {
 	it('should create a new  user', async done => {
-		const response = await request.post('/accounts').send(USERS.DUMMY)
+		const response = await request
+			.post('/accounts')
+			.send(USERS.DUMMY)
 		const { status, body } = response
 		expect(status).toEqual(CREATED)
 		expect(body).toHaveProperty('user')
@@ -47,7 +55,9 @@ describe('Accounts endpoint', () => {
 	})
 
 	it('should throw 409 if username already exists', async done => {
-		const response = await request.post('/accounts').send(USERS.USER_1)
+		const response = await request
+			.post('/accounts')
+			.send(USERS.USER_1)
 		const { status } = response
 		expect(status).toEqual(CONFLICT)
 		done()
@@ -66,12 +76,16 @@ describe('Accounts endpoint', () => {
 	})
 
 	it('should fetch the user account corresponding to the privateKey', async done => {
-		const newAccount = await request.post('/accounts').send(USERS.DUMMY)
+		const newAccount = await request
+			.post('/accounts')
+			.send(USERS.DUMMY)
 		const account = {
 			address: newAccount.body.user.address,
 			privateKey: newAccount.body.user.privateKey,
 		}
-		const response = await request.get(`/accounts/${account.privateKey}`)
+		const response = await request.get(
+			`/accounts/${account.privateKey}`,
+		)
 		const { status, body } = response
 		expect(status).toEqual(OK)
 		expect(body).toHaveProperty('user')

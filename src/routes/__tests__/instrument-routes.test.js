@@ -16,22 +16,28 @@ const INSTRUMENTS = {
 		symbol: faker.company.companyName().substr(0, 3),
 		abi: [
 			{
-			"type":"event",
-			"inputs": [{"name":"a","type":"uint256","indexed":true},{"name":"b","type":"bytes32","indexed":false}],
-			"name":"Event"
+				type: 'event',
+				inputs: [
+					{ name: 'a', type: 'uint256', indexed: true },
+					{ name: 'b', type: 'bytes32', indexed: false },
+				],
+				name: 'Event',
 			},
 			{
-			"type":"event",
-			"inputs": [{"name":"a","type":"uint256","indexed":true},{"name":"b","type":"bytes32","indexed":false}],
-			"name":"Event2"
+				type: 'event',
+				inputs: [
+					{ name: 'a', type: 'uint256', indexed: true },
+					{ name: 'b', type: 'bytes32', indexed: false },
+				],
+				name: 'Event2',
 			},
 			{
-			"type":"function",
-			"inputs": [{"name":"a","type":"uint256"}],
-			"name":"foo",
-			"outputs": []
-			}
-		]
+				type: 'function',
+				inputs: [{ name: 'a', type: 'uint256' }],
+				name: 'foo',
+				outputs: [],
+			},
+		],
 	},
 	INSTRUMENT_DUMMY: {
 		address: `0x776a9b10c5fe6045F17B4B0da110672C${Math.round(
@@ -41,22 +47,28 @@ const INSTRUMENTS = {
 		symbol: faker.company.companyName().substr(0, 3),
 		abi: [
 			{
-				"type":"event",
-				"inputs": [{"name":"a","type":"uint256","indexed":true},{"name":"b","type":"bytes32","indexed":false}],
-				"name":"Event"
+				type: 'event',
+				inputs: [
+					{ name: 'a', type: 'uint256', indexed: true },
+					{ name: 'b', type: 'bytes32', indexed: false },
+				],
+				name: 'Event',
 			},
 			{
-				"type":"event",
-				"inputs": [{"name":"a","type":"uint256","indexed":true},{"name":"b","type":"bytes32","indexed":false}],
-				"name":"Event2"
+				type: 'event',
+				inputs: [
+					{ name: 'a', type: 'uint256', indexed: true },
+					{ name: 'b', type: 'bytes32', indexed: false },
+				],
+				name: 'Event2',
 			},
 			{
-				"type":"function",
-				"inputs": [{"name":"a","type":"uint256"}],
-				"name":"foo",
-				"outputs": []
-			}
-		]
+				type: 'function',
+				inputs: [{ name: 'a', type: 'uint256' }],
+				name: 'foo',
+				outputs: [],
+			},
+		],
 	},
 }
 
@@ -73,7 +85,9 @@ const initInstrumentDatabase = async () => {
 
 describe('Instruments endpoint', () => {
 	it('should register a new instrument', async done => {
-		const response = await request.post('/instruments').send(INSTRUMENTS.INSTRUMENT_DUMMY)
+		const response = await request
+			.post('/instruments')
+			.send(INSTRUMENTS.INSTRUMENT_DUMMY)
 		const { status, body } = response
 		expect(status).toEqual(CREATED)
 		expect(body).toHaveProperty('instrument')
@@ -82,10 +96,18 @@ describe('Instruments endpoint', () => {
 		expect(body.instrument).toHaveProperty('name')
 		expect(body.instrument).toHaveProperty('symbol')
 		expect(body.instrument).toHaveProperty('abi')
-		expect(body.instrument.address).toBe(INSTRUMENTS.INSTRUMENT_DUMMY.address)
-		expect(body.instrument.name).toBe(INSTRUMENTS.INSTRUMENT_DUMMY.name)
-		expect(body.instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_DUMMY.symbol)
-		expect(body.instrument.abi).toStrictEqual(INSTRUMENTS.INSTRUMENT_DUMMY.abi)
+		expect(body.instrument.address).toBe(
+			INSTRUMENTS.INSTRUMENT_DUMMY.address,
+		)
+		expect(body.instrument.name).toBe(
+			INSTRUMENTS.INSTRUMENT_DUMMY.name,
+		)
+		expect(body.instrument.symbol).toBe(
+			INSTRUMENTS.INSTRUMENT_DUMMY.symbol,
+		)
+		expect(body.instrument.abi).toStrictEqual(
+			INSTRUMENTS.INSTRUMENT_DUMMY.abi,
+		)
 		done()
 	})
 
@@ -102,8 +124,12 @@ describe('Instruments endpoint', () => {
 		expect(instrument).toHaveProperty('name')
 		expect(instrument).toHaveProperty('symbol')
 		expect(instrument.name).toBe(INSTRUMENTS.INSTRUMENT_1.name)
-		expect(instrument.address).toBe(INSTRUMENTS.INSTRUMENT_1.address)
-		expect(instrument.symbol).toBe(INSTRUMENTS.INSTRUMENT_1.symbol)
+		expect(instrument.address).toBe(
+			INSTRUMENTS.INSTRUMENT_1.address,
+		)
+		expect(instrument.symbol).toBe(
+			INSTRUMENTS.INSTRUMENT_1.symbol,
+		)
 		done()
 	})
 
@@ -123,7 +149,7 @@ describe('Instruments endpoint', () => {
 	// 	done()
 	// })
 
-	it('should purchase fiat token', async done => {
+	// it('should purchase fiat token', async done => {
 	// 	purchase: {
 	// 		buyer: "0x3d088960898540017ABeCEcAf6017246899495e4",
 	// 			fiat: {
@@ -146,5 +172,5 @@ describe('Instruments endpoint', () => {
 	// 	expect(purchase.fiat).toHaveProperty('address')
 	// 	expect(purchase).toHaveProperty('amount')
 	// 	expect(purchase).toHaveProperty('status')
-	})
+	// })
 })
