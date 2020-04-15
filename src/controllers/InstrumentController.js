@@ -112,13 +112,26 @@ const purchaseFiat = async (req, res) => {
 
 const depositFiat = async (req, res) => {
 	try {
+		const { privateKey, amount } = req.body
+		const fiat = await req.context.models.Instrument.findOne({
+			symbol: req.params.instrumentSymbol,
+		})
+		const dex = await req.context.models.Instrument.findOne({
+			symbol: 'DEX',
+		})
+
 		let deposit = await new BlockchainInterface().deposit(
 			amount,
 			privateKey,
 			fiat,
+			dex,
 		)
-		// TODO: Record totalDeposited when deposit successful.
+		const user = await req.context.models.User.updateTotalDeposited(
+			privateKey,
+			amount,
+		)
 		return res.status(OK).json({
+			totalDeposited: user.totalDeposited,
 			deposit,
 		})
 	} catch (error) {

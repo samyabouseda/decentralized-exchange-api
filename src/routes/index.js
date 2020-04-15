@@ -10,6 +10,6 @@ router.get('/', (req, res) => {
 
 // ADD ROUTES HERE
 router.use('/accounts', userRoutes)
-router.use('/instruments', instrumentRoutes )
+router.use('/instruments', instrumentRoutes)
 
 export default router

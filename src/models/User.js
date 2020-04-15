@@ -15,6 +15,7 @@ const userSchema = new Schema({
 	},
 	totalDeposited: {
 		type: Number,
+		default: 0,
 	},
 	balances: [],
 })
@@ -44,6 +45,16 @@ userSchema.statics.updateBalances = async function(
 	let user = await this.findByPrivateKey(privateKey)
 	user.balances = _updateBalances(user.balances, purchase)
 	user.save()
+}
+
+userSchema.statics.updateTotalDeposited = async function(
+	privateKey,
+	amount,
+) {
+	let user = await this.findByPrivateKey(privateKey)
+	user.totalDeposited = user.totalDeposited + parseFloat(amount)
+	user.save()
+	return user
 }
 
 const _updateBalances = (balances, purchase) => {

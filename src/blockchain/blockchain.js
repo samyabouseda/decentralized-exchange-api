@@ -89,15 +89,16 @@ class BlockchainInterface {
 		}
 	}
 
-	async deposit(amount, privateKey, token) {
-		const { address, abi, symbol, name } = fiat
+	async deposit(amount, privateKey, token, dex) {
+		const { address } = token
 		const depositor = await this.getAddressFrom(privateKey)
-		const dexAddress = undefined
+		const dexAddress = dex.address
 		const from = {
 			address: depositor,
 			privateKey: privateKey.substr(2),
 		}
 		const to = dexAddress
+		const value = ''
 
 		// Build deposit object.
 		const jsonInterface = {
@@ -119,19 +120,34 @@ class BlockchainInterface {
 			],
 		}
 
-		const value = ''
-
-		// TODO: Finish implementing deposit.
-		// const deposit = amount * 1000000000000000000
-		// const params = [
-		// 	contracts.fiat.options.address,
-		// 	deposit.toString(),
-		// ]
-		// const data = this._web3.eth.abi.encodeFunctionCall(
-		// 	jsonInterface,
-		// 	params,
-		// )
-		// this.sendTransaction(from, to, value, data, this._web3)
+		const deposit = amount // * 1000000000000000000
+		const rate = 1
+		const params = [address, deposit.toString(), rate]
+		const data = this._web3.eth.abi.encodeFunctionCall(
+			jsonInterface,
+			params,
+		)
+		try {
+			// TODO: Temporarily deactivated sending deposit...
+			// await this._sendTransaction(
+			// 	from,
+			// 	to,
+			// 	value,
+			// 	data,
+			// 	this._web3,
+			// )
+			return {
+				account: from.address,
+				asset: {
+					symbol: token.symbol,
+					name: token.name,
+					address: token.address,
+				},
+				amount: amount,
+			}
+		} catch (error) {
+			throw Error('Deposit failed.')
+		}
 	}
 
 	async sendTransaction(from, to, value, data, web3) {
@@ -150,6 +166,35 @@ class BlockchainInterface {
 		)
 		// Broadcast the transaction.
 		return await this.sendSignedTransaction(tx)
+	}
+
+	async _sendTransaction(from, to, value, data, web3) {
+		const that = this
+		return new Promise(async function(resolve, reject) {
+			try {
+				// Build transaction object.
+				const txObject = await that.buildTransactionObject(
+					from,
+					to,
+					value,
+					data,
+					web3,
+				)
+				// Sign transaction object.
+				const tx = await that.signTransaction(
+					txObject,
+					from.privateKey,
+				)
+				// Broadcast the transaction.
+				await that.sendSignedTransaction(tx)
+				resolve({
+					status: 'sent',
+					transaction: tx,
+				})
+			} catch (error) {
+				reject(error)
+			}
+		})
 	}
 
 	async buildTransactionObject(from, to, value, data, web3) {
@@ -171,7 +216,6 @@ class BlockchainInterface {
 				}
 				resolve(txObject)
 			} catch (error) {
-				console.log(error)
 				reject(error)
 			}
 		})
@@ -184,7 +228,8 @@ class BlockchainInterface {
 			tx = new Transaction(txData)
 			tx.sign(bufferedPk)
 		} catch (error) {
-			console.log(error)
+			throw Error('Transaction signing failed.')
+			// console.log(error)
 		}
 		const serializedTx = tx.serialize()
 		return '0x' + serializedTx.toString('hex')
@@ -201,8 +246,7 @@ class BlockchainInterface {
 			console.log(res)
 			return true
 		} catch (error) {
-			console.log(error)
-			return false
+			throw Error('Sending signed transaction failed.')
 		}
 	}
 }
