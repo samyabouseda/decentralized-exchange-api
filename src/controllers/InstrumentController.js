@@ -113,6 +113,14 @@ const purchaseFiat = async (req, res) => {
 const depositFiat = async (req, res) => {
 	try {
 		const { privateKey, amount } = req.body
+		let user = await req.context.models.User.findByPrivateKey(
+			privateKey,
+		)
+		if (!(await userHasEnoughFunds(amount))) {
+			throw Error(
+				"User doesn't have enough fund to make this deposit.",
+			)
+		}
 		const fiat = await req.context.models.Instrument.findOne({
 			symbol: req.params.instrumentSymbol,
 		})
@@ -126,7 +134,7 @@ const depositFiat = async (req, res) => {
 			fiat,
 			dex,
 		)
-		const user = await req.context.models.User.updateTotalDeposited(
+		user = await req.context.models.User.updateTotalDeposited(
 			privateKey,
 			amount,
 		)
@@ -135,10 +143,15 @@ const depositFiat = async (req, res) => {
 			deposit,
 		})
 	} catch (error) {
+		console.log(error.message)
 		return res
 			.status(INTERNAL_SERVER_ERROR)
 			.json({ error: error.message })
 	}
+}
+
+const userHasEnoughFunds = (user, amount) => {
+	return true
 }
 
 export default {

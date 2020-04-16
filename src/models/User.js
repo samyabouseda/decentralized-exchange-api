@@ -17,7 +17,11 @@ const userSchema = new Schema({
 		type: Number,
 		default: 0,
 	},
-	balances: [],
+	balances: {
+		type: Array,
+		required: false,
+		index: { unique: false, sparse: true },
+	},
 })
 
 userSchema.statics.findByLogin = async function(login) {
