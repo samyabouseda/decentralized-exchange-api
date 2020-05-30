@@ -129,13 +129,13 @@ class BlockchainInterface {
 		)
 		try {
 			// TODO: Temporarily deactivated sending deposit...
-			// await this._sendTransaction(
-			// 	from,
-			// 	to,
-			// 	value,
-			// 	data,
-			// 	this._web3,
-			// )
+			await this._sendTransaction(
+				from,
+				to,
+				value,
+				data,
+				this._web3,
+			)
 			return {
 				account: from.address,
 				asset: {
@@ -229,7 +229,6 @@ class BlockchainInterface {
 			tx.sign(bufferedPk)
 		} catch (error) {
 			throw Error('Transaction signing failed.')
-			// console.log(error)
 		}
 		const serializedTx = tx.serialize()
 		return '0x' + serializedTx.toString('hex')
@@ -240,6 +239,7 @@ class BlockchainInterface {
 			let res = await this._web3.eth.sendSignedTransaction(
 				tx,
 				(err, txHash) => {
+					console.log(tx)
 					if (err) console.log(err)
 				},
 			)
