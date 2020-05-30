@@ -243,7 +243,6 @@ class BlockchainInterface {
 					if (err) console.log(err)
 				},
 			)
-			console.log(res)
 			return true
 		} catch (error) {
 			throw Error('Sending signed transaction failed.')

@@ -31,7 +31,6 @@ class MatchingEngineInterface {
 	}
 
 	async getBidsAndAsksFor(instrument) {
-		console.log(instrument.address)
 		const url = `${this.URI}/instruments/${instrument.address}`
 		try {
 			const response = await axios.get(url)

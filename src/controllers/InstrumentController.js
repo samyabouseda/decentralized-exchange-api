@@ -66,9 +66,12 @@ const getById = async (req, res) => {
 		const _instrument = await req.context.models.Instrument.findById(
 			req.params.instrumentId,
 		)
-		const instrument = await new MatchingEngineInterface().getBidsAndAsksFor(
+		const response = await new MatchingEngineInterface().getBidsAndAsksFor(
 			_instrument,
 		)
+		const instrument = response.data.instrument.instrument
+		console.log(_instrument)
+		console.log(instrument)
 		return res.status(OK).json({
 			instrument,
 		})

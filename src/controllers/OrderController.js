@@ -13,7 +13,6 @@ const placeOrder = async (req, res) => {
 		const newOrder = await req.context.models.Order.create(
 			req.body.order,
 		)
-		console.log(newOrder)
 		try {
 			// 1. Check user has enough funds
 			// 2. Check user has enough funds deposited  through blockchain interface
@@ -31,7 +30,7 @@ const placeOrder = async (req, res) => {
 			const executionResult = response.data.order
 
 			const order = {
-				id: executionResult.id,
+				id: newOrder._id,
 				account: '0x3d088960898540017ABeCEcAf6017246899495e4',
 				side: executionResult.side,
 				instrument: newOrder.instrument,
