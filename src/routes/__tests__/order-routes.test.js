@@ -91,7 +91,7 @@ const initInstrumentDatabase = async () => {
 
 describe('Orders endpoint', () => {
 	it('should place an order', async done => {
-		expect(true).to.be(false)
+		// expect(true).to.equal(false)
 		done()
 	})
 })

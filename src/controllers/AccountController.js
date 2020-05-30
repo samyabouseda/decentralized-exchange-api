@@ -9,12 +9,10 @@ import BlockchainInterface from '../blockchain'
 
 const create = async (req, res) => {
 	try {
-		console.log(req.body)
 		const user = await req.context.models.User.create({
 			username: req.body.username,
 			balances: [],
 		})
-		console.log(user)
 		try {
 			const account = await new BlockchainInterface().createAccount()
 			const userResponse = {
@@ -33,7 +31,6 @@ const create = async (req, res) => {
 				.json({ error: error.message })
 		}
 	} catch (error) {
-		console.log(error)
 		if (error.name === 'MongoError' && error.code === 11000) {
 			return res
 				.status(CONFLICT)
